@@ -323,7 +323,7 @@ SymbolBufferBuilder.prototype.addSymbols = function(shaderName, quads, scale, ke
     var addVertex = this[this.getAddVertexMethodName(shaderName)].bind(this);
 
     var zoom = this.zoom;
-    var placementZoom = Math.max(Math.log(scale) / Math.LN2 + zoom, 0);
+    var placementZoom = Math.max(log2(scale) + zoom, 0);
 
     for (var k = 0; k < quads.length; k++) {
 
@@ -341,21 +341,21 @@ SymbolBufferBuilder.prototype.addSymbols = function(shaderName, quads, scale, ke
             tex = symbol.tex,
             anchorPoint = symbol.anchorPoint,
 
-            minZoom = Math.max(zoom + Math.log(symbol.minScale) / Math.LN2, placementZoom),
-            maxZoom = Math.min(zoom + Math.log(symbol.maxScale) / Math.LN2, 25);
+            minZoom = Math.max(zoom + log2(symbol.minScale), placementZoom),
+            maxZoom = Math.min(zoom + log2(symbol.maxScale), 25);
 
         if (maxZoom <= minZoom) continue;
 
         // Lower min zoom so that while fading out the label it can be shown outside of collision-free zoom levels
         if (minZoom === placementZoom) minZoom = 0;
 
-        var index0 = addVertex(anchorPoint.x, anchorPoint.y, tl.x, tl.y, tex.x, tex.y, minZoom, maxZoom, placementZoom);
-        var index1 = addVertex(anchorPoint.x, anchorPoint.y, tr.x, tr.y, tex.x + tex.w, tex.y, minZoom, maxZoom, placementZoom);
-        var index2 = addVertex(anchorPoint.x, anchorPoint.y, bl.x, bl.y, tex.x, tex.y + tex.h, minZoom, maxZoom, placementZoom);
-        var index3 = addVertex(anchorPoint.x, anchorPoint.y, br.x, br.y, tex.x + tex.w, tex.y + tex.h, minZoom, maxZoom, placementZoom);
+        var index = addVertex(anchorPoint.x, anchorPoint.y, tl.x, tl.y, tex.x, tex.y, minZoom, maxZoom, placementZoom);
+        addVertex(anchorPoint.x, anchorPoint.y, tr.x, tr.y, tex.x + tex.w, tex.y, minZoom, maxZoom, placementZoom);
+        addVertex(anchorPoint.x, anchorPoint.y, bl.x, bl.y, tex.x, tex.y + tex.h, minZoom, maxZoom, placementZoom);
+        addVertex(anchorPoint.x, anchorPoint.y, br.x, br.y, tex.x + tex.w, tex.y + tex.h, minZoom, maxZoom, placementZoom);
 
-        addElement(index0, index1, index2);
-        addElement(index1, index2, index3);
+        addElement(index + 0, index + 1, index + 2);
+        addElement(index + 1, index + 2, index + 3);
     }
 
 };
@@ -433,3 +433,5 @@ function SymbolInstance(anchor, line, shapedText, shapedIcon, layout, addToBuffe
         this.iconCollisionFeature = new CollisionFeature(line, anchor, shapedIcon, iconBoxScale, iconPadding, iconAlongLine);
     }
 }
+
+var log2 = Math.log2 || function(x) { return Math.log(x) / Math.LN2 };

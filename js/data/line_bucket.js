@@ -136,10 +136,6 @@ LineBucket.prototype.addLine = function(vertices, join, cap, miterLimit, roundLi
         // of the segments between the previous line and the next line.
         var joinNormal = prevNormal.add(nextNormal)._unit();
 
-        if (isNaN(joinNormal.x) || isNaN(joinNormal.y)) {
-            return;
-        }
-
         /*  joinNormal     prevNormal
          *             ↖      ↑
          *                .________. prevVertex

@@ -70,12 +70,9 @@ function Bucket(options) {
     this.add = {};
     for (var shaderName in this.shaders) {
         var shader = this.shaders[shaderName];
-
-        this.add[shaderName] = {
-            vertex: createVertexAddMethod(shaderName, shader).bind(this),
-            element: createElementAddMethod(shaderName, shader, false).bind(this),
-            secondElement: createElementAddMethod(shaderName, shader, true).bind(this)
-        };
+        this[this.getAddMethodName(shaderName, 'vertex')] = createVertexAddMethod(shaderName, shader).bind(this);
+        this[this.getAddMethodName(shaderName, 'element')] = createElementAddMethod(shaderName, shader, false).bind(this);
+        this[this.getAddMethodName(shaderName, 'secondElement')] = createElementAddMethod(shaderName, shader, true).bind(this);
     }
 }
 
@@ -133,6 +130,16 @@ Bucket.prototype.resetBuffers = function(buffers) {
     }
 
     this.elementGroups = createElementGroups(this.shaders, this.buffers);
+};
+
+/**
+ * Get the name of the method used to add an item to a buffer.
+ * @param {string} shaderName The name of the shader that will use the buffer
+ * @param {string} type One of "vertex", "element", or "secondElement"
+ * @returns {string}
+ */
+Bucket.prototype.getAddMethodName = function(shaderName, type) {
+    return 'add' + capitalize(shaderName) + capitalize(type);
 };
 
 function createLayoutProperties(layer, zoom) {
@@ -225,4 +232,8 @@ function createElementBuffer(components) {
             type: Buffer.ELEMENT_ATTRIBUTE_TYPE
         }]
     });
+}
+
+function capitalize(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }

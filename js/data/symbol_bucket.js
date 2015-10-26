@@ -405,8 +405,8 @@ SymbolBucket.prototype.addSymbols = function(shaderName, quads, scale, keepUprig
 
     this.makeRoomFor(shaderName, 4 * quads.length);
 
-    var addElement = this.add[shaderName].element;
-    var addVertex = this.add[shaderName].vertex;
+    var addElement = this[this.getAddMethodName(shaderName, 'element')];
+    var addVertex = this[this.getAddMethodName(shaderName, 'vertex')];
 
     var zoom = this.zoom;
     var placementZoom = Math.max(Math.log(scale) / Math.LN2 + zoom, 0);
@@ -488,14 +488,14 @@ SymbolBucket.prototype.addToDebugBuffers = function(collisionTile) {
                 var maxZoom = Math.max(0, Math.min(25, this.zoom + Math.log(box.maxScale) / Math.LN2));
                 var placementZoom = Math.max(0, Math.min(25, this.zoom + Math.log(box.placementScale) / Math.LN2));
 
-                this.add.collisionBox.vertex(anchorPoint, tl, maxZoom, placementZoom);
-                this.add.collisionBox.vertex(anchorPoint, tr, maxZoom, placementZoom);
-                this.add.collisionBox.vertex(anchorPoint, tr, maxZoom, placementZoom);
-                this.add.collisionBox.vertex(anchorPoint, br, maxZoom, placementZoom);
-                this.add.collisionBox.vertex(anchorPoint, br, maxZoom, placementZoom);
-                this.add.collisionBox.vertex(anchorPoint, bl, maxZoom, placementZoom);
-                this.add.collisionBox.vertex(anchorPoint, bl, maxZoom, placementZoom);
-                this.add.collisionBox.vertex(anchorPoint, tl, maxZoom, placementZoom);
+                this.addCollisionBoxVertex(anchorPoint, tl, maxZoom, placementZoom);
+                this.addCollisionBoxVertex(anchorPoint, tr, maxZoom, placementZoom);
+                this.addCollisionBoxVertex(anchorPoint, tr, maxZoom, placementZoom);
+                this.addCollisionBoxVertex(anchorPoint, br, maxZoom, placementZoom);
+                this.addCollisionBoxVertex(anchorPoint, br, maxZoom, placementZoom);
+                this.addCollisionBoxVertex(anchorPoint, bl, maxZoom, placementZoom);
+                this.addCollisionBoxVertex(anchorPoint, bl, maxZoom, placementZoom);
+                this.addCollisionBoxVertex(anchorPoint, tl, maxZoom, placementZoom);
             }
         }
     }

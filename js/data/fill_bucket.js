@@ -60,16 +60,16 @@ FillBucket.prototype.addFill = function(vertices) {
     for (var i = 0; i < vertices.length; i++) {
         var currentVertex = vertices[i];
 
-        var currentIndex = this.add.fill.vertex(currentVertex.x, currentVertex.y);
+        var currentIndex = this.addFillVertex(currentVertex.x, currentVertex.y);
         if (i === 0) firstIndex = currentIndex;
 
         // Only add triangles that have distinct vertices.
         if (i >= 2 && (currentVertex.x !== vertices[0].x || currentVertex.y !== vertices[0].y)) {
-            this.add.fill.element(firstIndex, prevIndex, currentIndex);
+            this.addFillElement(firstIndex, prevIndex, currentIndex);
         }
 
         if (i >= 1) {
-            this.add.fill.secondElement(prevIndex, currentIndex);
+            this.addFillSecondElement(prevIndex, currentIndex);
         }
 
         prevIndex = currentIndex;

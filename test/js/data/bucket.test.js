@@ -40,9 +40,9 @@ test('Bucket', function(t) {
         Class.prototype.addFeature = function(feature) {
             this.makeRoomFor('test', 1);
             var point = feature.loadGeometry()[0][0];
-            this.add.test.vertex(point.x, point.y);
-            this.add.test.element(1, 2, 3);
-            this.add.test.secondElement(point.x, point.y);
+            this.addTestVertex(point.x, point.y);
+            this.addTestElement(1, 2, 3);
+            this.addTestSecondElement(point.x, point.y);
         };
 
         return Class;

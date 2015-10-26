@@ -63,13 +63,13 @@ CircleBucket.prototype.addFeature = function(feature) {
         // │ 0     1 │
         // └─────────┘
 
-        var vertex0 = this.add.circle.vertex(x, y, -1, -1);
-        var vertex1 = this.add.circle.vertex(x, y, 1, -1);
-        var vertex2 = this.add.circle.vertex(x, y, 1, 1);
-        var vertex3 = this.add.circle.vertex(x, y, -1, 1);
+        var vertex0 = this.addCircleVertex(x, y, -1, -1);
+        var vertex1 = this.addCircleVertex(x, y, 1, -1);
+        var vertex2 = this.addCircleVertex(x, y, 1, 1);
+        var vertex3 = this.addCircleVertex(x, y, -1, 1);
 
-        this.add.circle.element(vertex0, vertex1, vertex2);
-        this.add.circle.element(vertex0, vertex3, vertex2);
+        this.addCircleElement(vertex0, vertex1, vertex2);
+        this.addCircleElement(vertex0, vertex3, vertex2);
     }
 
 };

@@ -138,7 +138,7 @@ Tile.prototype = {
      */
     unloadVectorData: function(painter) {
         for (var b in this.buffers) {
-            this.buffers[b].destroy(painter.gl);
+            if (this.buffers[b]) this.buffers[b].destroy(painter.gl);
         }
         this.buffers = null;
     },

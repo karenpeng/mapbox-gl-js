@@ -30,45 +30,39 @@ function SymbolBucket(options) {
 
 SymbolBucket.prototype = util.inherit(Bucket, {});
 
+var shaderAttributeArgs = ['x', 'y', 'ox', 'oy', 'tx', 'ty', 'minzoom', 'maxzoom', 'labelminzoom'];
+
 var shaderAttributes = [{
     name: 'pos',
     components: 2,
     type: Bucket.AttributeType.SHORT,
-    value: function(x, y) {
-        return [x, y];
-    }
+    value: ['x', 'y']
 }, {
     name: 'offset',
     components: 2,
     type: Bucket.AttributeType.SHORT,
-    value: function(x, y, ox, oy) {
-        return [
-            Math.round(ox * 64), // use 1/64 pixels for placement
-            Math.round(oy * 64)
-        ];
-    }
+    value: [
+        'Math.round(ox * 64)', // use 1/64 pixels for placement
+        'Math.round(oy * 64)'
+    ]
 }, {
     name: 'data1',
     components: 4,
     type: Bucket.AttributeType.UNSIGNED_BYTE,
-    value: function(x, y, ox, oy, tx, ty, minzoom, maxzoom, labelminzoom) {
-        return [
-            tx / 4, /* tex */
-            ty / 4, /* tex */
-            (labelminzoom || 0) * 10, /* labelminzoom */
-            0
-        ];
-    }
+    value: [
+        'tx / 4',                   // tex
+        'ty / 4',                   // tex
+        '(labelminzoom || 0) * 10', // labelminzoom
+        '0'
+    ]
 }, {
     name: 'data2',
     components: 2,
     type: Bucket.AttributeType.UNSIGNED_BYTE,
-    value: function(x, y, ox, oy, tx, ty, minzoom, maxzoom) {
-        return [
-            (minzoom || 0) * 10, /* minzoom */
-            Math.min(maxzoom || 25, 25) * 10 /* minzoom */
-        ];
-    }
+    value: [
+        '(minzoom || 0) * 10',             // minzoom
+        'Math.min(maxzoom || 25, 25) * 10' // minzoom
+    ]
 }];
 
 SymbolBucket.prototype.shaders = {
@@ -76,45 +70,43 @@ SymbolBucket.prototype.shaders = {
     glyph: {
         vertexBuffer: 'glyphVertex',
         elementBuffer: 'glyphElement',
+        attributeArgs: shaderAttributeArgs,
         attributes: shaderAttributes
     },
 
     icon: {
         vertexBuffer: 'iconVertex',
         elementBuffer: 'iconElement',
+        attributeArgs: shaderAttributeArgs,
         attributes: shaderAttributes
     },
 
     collisionBox: {
         vertexBuffer: 'collisionBoxVertex',
 
+        attributeArgs: ['point', 'extrude', 'maxZoom', 'placementZoom'],
+
         attributes: [{
             name: 'pos',
             components: 2,
             type: Bucket.AttributeType.SHORT,
-            value: function(point) {
-                return [ point.x, point.y ];
-            }
+            value: [ 'point.x', 'point.y' ]
         }, {
             name: 'extrude',
             components: 2,
             type: Bucket.AttributeType.SHORT,
-            value: function(point, extrude) {
-                return [
-                    Math.round(extrude.x),
-                    Math.round(extrude.y)
-                ];
-            }
+            value: [
+                'Math.round(extrude.x)',
+                'Math.round(extrude.y)'
+            ]
         }, {
             name: 'data',
             components: 2,
             type: Bucket.AttributeType.UNSIGNED_BYTE,
-            value: function(point, extrude, maxZoom, placementZoom) {
-                return [
-                    maxZoom * 10,
-                    placementZoom * 10
-                ];
-            }
+            value: [
+                'maxZoom * 10',
+                'placementZoom * 10'
+            ]
         }]
     }
 };

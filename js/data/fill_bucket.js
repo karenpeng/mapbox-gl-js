@@ -19,13 +19,13 @@ FillBucket.prototype.shaders = {
 
         secondElementBufferComponents: 2,
 
+        attributeArgs: ['x', 'y'],
+
         attributes: [{
             name: 'pos',
             components: 2,
             type: Bucket.AttributeType.SHORT,
-            value: function(x, y) {
-                return [x, y];
-            }
+            value: ['x', 'y']
         }]
     }
 };

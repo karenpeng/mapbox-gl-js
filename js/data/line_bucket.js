@@ -24,28 +24,26 @@ LineBucket.prototype.shaders = {
         vertexBuffer: 'lineVertex',
         elementBuffer: 'lineElement',
 
+        attributeArgs: ['point', 'extrude', 'tx', 'ty', 'linesofar'],
+
         attributes: [{
             name: 'pos',
             components: 2,
             type: Bucket.AttributeType.SHORT,
-            value: function(point, extrude, tx, ty) {
-                return [
-                    (point.x << 1) | tx,
-                    (point.y << 1) | ty
-                ];
-            }
+            value: [
+                '(point.x << 1) | tx',
+                '(point.y << 1) | ty'
+            ]
         }, {
             name: 'data',
             components: 4,
             type: Bucket.AttributeType.BYTE,
-            value: function(point, extrude, tx, ty, linesofar) {
-                return [
-                    Math.round(EXTRUDE_SCALE * extrude.x),
-                    Math.round(EXTRUDE_SCALE * extrude.y),
-                    linesofar / 128,
-                    linesofar % 128
-                ];
-            }
+            value: [
+                'Math.round(' + EXTRUDE_SCALE + ' * extrude.x)',
+                'Math.round(' + EXTRUDE_SCALE + ' * extrude.y)',
+                'linesofar / 128',
+                'linesofar % 128'
+            ]
         }]
     }
 };

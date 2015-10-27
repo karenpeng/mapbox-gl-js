@@ -21,18 +21,16 @@ test('Bucket', function(t) {
                 secondElementBuffer: 'testSecondElement',
                 secondElementBufferComponents: 2,
 
+                attributeArgs: ['x', 'y'],
+
                 attributes: [{
                     name: 'map',
-                    value: function(x) {
-                        return [x];
-                    }
+                    value: ['x']
                 }, {
                     name: 'box',
                     components: 2,
                     type: Buffer.AttributeType.SHORT,
-                    value: function(x, y) {
-                        return [x * 2, y * 2];
-                    }
+                    value: ['x * 2', 'y * 2']
                 }]
             }
         };

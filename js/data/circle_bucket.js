@@ -27,18 +27,17 @@ CircleBucket.prototype.shaders = {
 
         elementBuffer: 'circleElement',
 
+        attributeArgs: ['x', 'y', 'extrudeX', 'extrudeY'],
+
         attributes: [{
             name: 'pos',
             components: 2,
             type: Bucket.AttributeType.SHORT,
-            value: function(x, y, extrudeX, extrudeY) {
-                return [
-                    (x * 2) + ((extrudeX + 1) / 2),
-                    (y * 2) + ((extrudeY + 1) / 2)
-                ];
-            }
+            value: [
+                '(x * 2) + ((extrudeX + 1) / 2)',
+                '(y * 2) + ((extrudeY + 1) / 2)'
+            ]
         }]
-
     }
 };
 

@@ -149,14 +149,13 @@ Buffer.prototype.get = function(index) {
  * @param {number} args The "arguments" object from Buffer::push
  */
 Buffer.prototype.validate = function(args) {
-    assert(args.length === this.attributes.length);
-    for (var i = 0; i < args.length; i++) {
-        var attribute = this.attributes[i];
-        assert(args[i].length === attribute.components);
-        for (var j = 0; j < attribute.components; j++) {
-            assert(!isNaN(args[i][j]));
+    var argIndex = 0;
+    for (var i = 0; i < this.attributes.length; i++) {
+        for (var j = 0; j < this.attributes[i].components; j++) {
+            assert(!isNaN(args[argIndex++]));
         }
     }
+    assert(argIndex === args.length);
 };
 
 Buffer.prototype._resize = function(capacity) {
@@ -187,15 +186,14 @@ Buffer.prototype._createPushMethod = function() {
     for (var i = 0; i < this.attributes.length; i++) {
         var attribute = this.attributes[i];
         var offsetId = 'offset' + i;
-        var argId = 'value' + i;
-        argNames.push(argId);
 
         body += '\nvar ' + offsetId + ' = (offset + ' + attribute.offset + ') / ' + attribute.type.size + ';\n';
 
         for (var j = 0; j < attribute.components; j++) {
-            var rvalue = argId + '[' + j + ']';
+            var rvalue = 'value' + argNames.length;
             var lvalue = 'this.views.' + attribute.type.name + '[' + offsetId + ' + ' + j + ']';
             body += lvalue + ' = ' + rvalue + ';\n';
+            argNames.push(rvalue);
         }
     }
 

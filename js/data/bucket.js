@@ -172,31 +172,17 @@ function createLayoutProperties(layer, zoom) {
 function createVertexAddMethod(shaderName, shader) {
     if (!shader.vertexBuffer) return null;
 
-    // Find max arg length of all attribute value functions
-    var argCount = 0;
+    var pushArgs = [];
     for (var i = 0; i < shader.attributes.length; i++) {
-        var attribute = shader.attributes[i];
-        argCount = Math.max(attribute.value.length, argCount);
-    }
-
-    var argIds = [];
-    for (var j = 0; j < argCount; j++) {
-        argIds.push('a' + j);
+        pushArgs = pushArgs.concat(shader.attributes[i].value);
     }
 
     var body = '';
-    body += 'var attributes = this.shaders.' + shaderName + '.attributes;\n';
     body += 'var elementGroups = this.elementGroups.' + shaderName + ';\n';
     body += 'elementGroups.current.vertexLength++;\n';
-    body += 'return this.buffers.' + shader.vertexBuffer + '.push(\n';
+    body += 'return this.buffers.' + shader.vertexBuffer + '.push(\n    ' + pushArgs.join(',\n    ') + '\n) - elementGroups.current.vertexStartIndex;';
 
-    for (var k = 0; k < shader.attributes.length; k++) {
-        body += '  attributes[' + k + '].value(' + argIds.join(', ') + ')';
-        body += (k !== shader.attributes.length - 1) ? ',\n' : '';
-    }
-    body += '\n) - elementGroups.current.vertexStartIndex;';
-
-    return new Function(argIds, body);
+    return new Function(shader.attributeArgs, body);
 }
 
 function createElementAddMethod(shaderName, shader, isSecond) {
@@ -204,9 +190,9 @@ function createElementAddMethod(shaderName, shader, isSecond) {
     if (!bufferName) return function() { assert(false); };
     var lengthName = isSecond ? 'secondElementLength' : 'elementLength';
 
-    return function() {
+    return function(one, two, three) {
         this.elementGroups[shaderName].current[lengthName]++;
-        return this.buffers[bufferName].push(arguments);
+        return this.buffers[bufferName].push(one, two, three);
     };
 }
 

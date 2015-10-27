@@ -178,9 +178,9 @@ function createVertexAddMethod(shaderName, shader) {
     }
 
     var body = '';
-    body += 'var elementGroups = this.elementGroups.' + shaderName + ';\n';
-    body += 'elementGroups.current.vertexLength++;\n';
-    body += 'return this.buffers.' + shader.vertexBuffer + '.push(\n    ' + pushArgs.join(',\n    ') + '\n) - elementGroups.current.vertexStartIndex;';
+    body += 'var elementGroup = this.elementGroups.' + shaderName + '.current;\n';
+    body += 'elementGroup.vertexLength++;\n';
+    body += 'return this.buffers.' + shader.vertexBuffer + '.push(\n    ' + pushArgs.join(',\n    ') + '\n) - elementGroup.vertexStartIndex;';
 
     return new Function(shader.attributeArgs, body);
 }

@@ -397,8 +397,8 @@ SymbolBucket.prototype.addSymbols = function(shaderName, quads, scale, keepUprig
 
     this.makeRoomFor(shaderName, 4 * quads.length);
 
-    var addElement = this[this.getAddMethodName(shaderName, 'element')];
-    var addVertex = this[this.getAddMethodName(shaderName, 'vertex')];
+    var addElement = this[this.getAddMethodName(shaderName, 'element')].bind(this);
+    var addVertex = this[this.getAddMethodName(shaderName, 'vertex')].bind(this);
 
     var zoom = this.zoom;
     var placementZoom = Math.max(Math.log(scale) / Math.LN2 + zoom, 0);

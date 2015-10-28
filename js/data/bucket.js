@@ -70,9 +70,9 @@ function Bucket(options) {
     this.add = {};
     for (var shaderName in this.shaders) {
         var shader = this.shaders[shaderName];
-        this[this.getAddMethodName(shaderName, 'vertex')] = createVertexAddMethod(shaderName, shader).bind(this);
-        this[this.getAddMethodName(shaderName, 'element')] = createElementAddMethod(shaderName, shader, false).bind(this);
-        this[this.getAddMethodName(shaderName, 'secondElement')] = createElementAddMethod(shaderName, shader, true).bind(this);
+        this[this.getAddMethodName(shaderName, 'vertex')] = createVertexAddMethod(shaderName, shader);
+        this[this.getAddMethodName(shaderName, 'element')] = createElementAddMethod(shaderName, shader, false);
+        this[this.getAddMethodName(shaderName, 'secondElement')] = createElementAddMethod(shaderName, shader, true);
     }
 }
 

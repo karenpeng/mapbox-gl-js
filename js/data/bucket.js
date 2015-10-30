@@ -67,7 +67,6 @@ function Bucket(options) {
 
     this.resetBuffers(options.buffers);
 
-    this.add = {};
     for (var shaderName in this.shaders) {
         var shader = this.shaders[shaderName];
         this[this.getAddMethodName(shaderName, 'vertex')] = createVertexAddMethod(shaderName, shader);

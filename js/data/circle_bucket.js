@@ -22,10 +22,8 @@ CircleBucket.prototype = util.inherit(Bucket, {});
 
 CircleBucket.prototype.shaders = {
     circle: {
-
-        vertexBuffer: 'circleVertex',
-
-        elementBuffer: 'circleElement',
+        vertexBuffer: true,
+        elementBuffer: true,
 
         attributeArgs: ['x', 'y', 'extrudeX', 'extrudeY'],
 

@@ -98,7 +98,7 @@ function drawFill(painter, layer, posMatrix, tile) {
 
         // Draw all buffers
         vertex = tile.buffers.fillVertex;
-        elements = tile.buffers.outlineElement;
+        elements = tile.buffers.fillSecondElement;
         elements.bind(gl);
 
         for (var k = 0; k < elementGroups.groups.length; k++) {

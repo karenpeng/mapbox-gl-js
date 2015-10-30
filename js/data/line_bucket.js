@@ -21,8 +21,8 @@ LineBucket.prototype = util.inherit(Bucket, {});
 
 LineBucket.prototype.shaders = {
     line: {
-        vertexBuffer: 'lineVertex',
-        elementBuffer: 'lineElement',
+        vertexBuffer: true,
+        elementBuffer: true,
 
         attributeArgs: ['point', 'extrude', 'tx', 'ty', 'linesofar'],
 

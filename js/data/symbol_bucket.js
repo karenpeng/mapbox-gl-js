@@ -68,15 +68,15 @@ var shaderAttributes = [{
 SymbolBucket.prototype.shaders = {
 
     glyph: {
-        vertexBuffer: 'glyphVertex',
-        elementBuffer: 'glyphElement',
+        vertexBuffer: true,
+        elementBuffer: true,
         attributeArgs: shaderAttributeArgs,
         attributes: shaderAttributes
     },
 
     icon: {
-        vertexBuffer: 'iconVertex',
-        elementBuffer: 'iconElement',
+        vertexBuffer: true,
+        elementBuffer: true,
         attributeArgs: shaderAttributeArgs,
         attributes: shaderAttributes
     },

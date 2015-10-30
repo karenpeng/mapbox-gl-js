@@ -13,10 +13,9 @@ FillBucket.prototype = util.inherit(Bucket, {});
 
 FillBucket.prototype.shaders = {
     fill: {
-        vertexBuffer: 'fillVertex',
-        elementBuffer: 'fillElement',
-        secondElementBuffer: 'outlineElement',
-
+        vertexBuffer: true,
+        elementBuffer: true,
+        secondElementBuffer: true,
         secondElementBufferComponents: 2,
 
         attributeArgs: ['x', 'y'],

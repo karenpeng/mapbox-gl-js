@@ -69,9 +69,9 @@ function Bucket(options) {
 
     for (var shaderName in this.shaders) {
         var shader = this.shaders[shaderName];
-        this[this.getAddMethodName(shaderName, 'vertex')] = createVertexAddMethod(shaderName, shader);
-        this[this.getAddMethodName(shaderName, 'element')] = createElementAddMethod(shaderName, shader, false);
-        this[this.getAddMethodName(shaderName, 'secondElement')] = createElementAddMethod(shaderName, shader, true);
+        this[this.getAddMethodName(shaderName, 'vertex')] = createVertexAddMethod(shaderName, shader, this.getBufferName(shaderName, 'vertex'));
+        this[this.getAddMethodName(shaderName, 'element')] = createElementAddMethod(shaderName, shader, this.getBufferName(shaderName, 'element'), false);
+        this[this.getAddMethodName(shaderName, 'secondElement')] = createElementAddMethod(shaderName, shader, this.getBufferName(shaderName, 'secondElement'), true);
     }
 }
 
@@ -105,30 +105,35 @@ Bucket.prototype.makeRoomFor = function(shaderName, vertexLength) {
  */
 Bucket.prototype.resetBuffers = function(buffers) {
     this.buffers = buffers;
+    this.elementGroups = {};
 
     for (var shaderName in this.shaders) {
         var shader = this.shaders[shaderName];
 
-        var vertexBufferName = shader.vertexBuffer;
-        if (vertexBufferName && !buffers[vertexBufferName]) {
+        var vertexBufferName = this.getBufferName(shaderName, 'vertex');
+        if (shader.vertexBuffer && !buffers[vertexBufferName]) {
             buffers[vertexBufferName] = new Buffer({
                 type: Buffer.BufferType.VERTEX,
                 attributes: shader.attributes
             });
         }
 
-        var elementBufferName = shader.elementBuffer;
-        if (elementBufferName && !buffers[elementBufferName]) {
+        var elementBufferName = this.getBufferName(shaderName, 'element');
+        if (shader.elementBuffer && !buffers[elementBufferName]) {
             buffers[elementBufferName] = createElementBuffer(shader.elementBufferComponents);
         }
 
-        var secondElementBufferName = shader.secondElementBuffer;
-        if (secondElementBufferName && !buffers[secondElementBufferName]) {
+        var secondElementBufferName = this.getBufferName(shaderName, 'secondElement');
+        if (shader.secondElementBuffer && !buffers[secondElementBufferName]) {
             buffers[secondElementBufferName] = createElementBuffer(shader.secondElementBufferComponents);
         }
-    }
 
-    this.elementGroups = createElementGroups(this.shaders, this.buffers);
+        this.elementGroups[shaderName] = new ElementGroups(
+            buffers[this.getBufferName(shaderName, 'vertex')],
+            buffers[this.getBufferName(shaderName, 'element')],
+            buffers[this.getBufferName(shaderName, 'secondElement')]
+        );
+    }
 };
 
 /**
@@ -139,6 +144,16 @@ Bucket.prototype.resetBuffers = function(buffers) {
  */
 Bucket.prototype.getAddMethodName = function(shaderName, type) {
     return 'add' + capitalize(shaderName) + capitalize(type);
+};
+
+/**
+ * Get the name of a buffer.
+ * @param {string} shaderName The name of the shader that will use the buffer
+ * @param {string} type One of "vertex", "element", or "secondElement"
+ * @returns {string}
+ */
+Bucket.prototype.getBufferName = function(shaderName, type) {
+    return shaderName + capitalize(type);
 };
 
 function createLayoutProperties(layer, zoom) {
@@ -168,7 +183,7 @@ function createLayoutProperties(layer, zoom) {
     return new LayoutProperties[layer.type](layout);
 }
 
-function createVertexAddMethod(shaderName, shader) {
+function createVertexAddMethod(shaderName, shader, bufferName) {
     if (!shader.vertexBuffer) return null;
 
     var pushArgs = [];
@@ -179,13 +194,12 @@ function createVertexAddMethod(shaderName, shader) {
     var body = '';
     body += 'var elementGroup = this.elementGroups.' + shaderName + '.current;\n';
     body += 'elementGroup.vertexLength++;\n';
-    body += 'return this.buffers.' + shader.vertexBuffer + '.push(\n    ' + pushArgs.join(',\n    ') + '\n) - elementGroup.vertexStartIndex;';
+    body += 'return this.buffers.' + bufferName + '.push(\n    ' + pushArgs.join(',\n    ') + '\n) - elementGroup.vertexStartIndex;';
 
     return new Function(shader.attributeArgs, body);
 }
 
-function createElementAddMethod(shaderName, shader, isSecond) {
-    var bufferName = isSecond ? shader.secondElementBuffer : shader.elementBuffer;
+function createElementAddMethod(shaderName, shader, bufferName, isSecond) {
     if (!bufferName) return function() { assert(false); };
     var lengthName = isSecond ? 'secondElementLength' : 'elementLength';
 
@@ -193,19 +207,6 @@ function createElementAddMethod(shaderName, shader, isSecond) {
         this.elementGroups[shaderName].current[lengthName]++;
         return this.buffers[bufferName].push(one, two, three);
     };
-}
-
-function createElementGroups(shaders, buffers) {
-    var elementGroups = {};
-    for (var shaderName in shaders) {
-        var shader = shaders[shaderName];
-        elementGroups[shaderName] = new ElementGroups(
-            buffers[shader.vertexBuffer],
-            buffers[shader.elementBuffer],
-            buffers[shader.secondElementBuffer]
-        );
-    }
-    return elementGroups;
 }
 
 function createElementBuffer(components) {
